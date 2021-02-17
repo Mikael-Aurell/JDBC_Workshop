@@ -1,4 +1,4 @@
-package se.lexicon;
+package se.lexicon.dao;
 
 import se.lexicon.model.City;
 
