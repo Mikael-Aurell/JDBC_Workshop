@@ -16,8 +16,14 @@ public class App
        List<City> findAll = dao.findAll();
        findAll.forEach(System.out::println);*/
 
-        City city = dao.findById(6);
-        System.out.println(city.toString());
+        //FindById
+        //City city = dao.findById(6);
+        //System.out.println(city.toString());
+
+        //FindByName
+        List<City> findCities = dao.findByName("Kabul");
+        findCities.forEach(System.out::println);
+
        //City aCity = new City("test","tes","test",67);
        //City addCity_ = dao.add(aCity);
     }
