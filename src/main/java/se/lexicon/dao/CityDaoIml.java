@@ -36,7 +36,27 @@ public class CityDaoIml implements CityDao {
 
     @Override
     public City findById(int id) {
-        return null;
+        String query = "select * from city where id=?";
+        City findCity = new City();
+        try(
+                PreparedStatement preparedStatement = MySqlConnection.getConnection().prepareStatement(query)
+                ) {
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if(resultSet.next()){
+                findCity.setId(resultSet.getInt(1));
+                findCity.setName(resultSet.getString(2));
+                findCity.setCountryCode(resultSet.getString(3));
+                findCity.setDistrict(resultSet.getString(4));
+                findCity.setPopulation(resultSet.getInt(5));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return findCity;
     }
 
     @Override
@@ -52,7 +72,25 @@ public class CityDaoIml implements CityDao {
 
     @Override
     public City add(City city) {
-        return null;
+        String query = "insert into city values (?,?,?,?,?)";
+        City addCity = new City();
+        try (
+                PreparedStatement preparedStatement = MySqlConnection.getConnection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+                ) {
+
+            preparedStatement.setInt(1, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(2, city.getName());
+            preparedStatement.setString(3, city.getCountryCode());
+            preparedStatement.setString(4, city.getDistrict());
+            preparedStatement.setInt(5, city.getPopulation());
+
+            int result = preparedStatement.executeUpdate();
+            System.out.println((result==1) ? "New City added successfully to database" : "Not ok");
+
+            } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return addCity;
     }
 
     @Override
