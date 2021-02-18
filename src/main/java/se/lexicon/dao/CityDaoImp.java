@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CityDaoIml implements CityDao {
+public class CityDaoImp implements CityDao {
 
     @Override
     public List<City> findAll(){
@@ -61,6 +61,31 @@ public class CityDaoIml implements CityDao {
 
     @Override
     public List<City> findByCode(String code) {
+        if (code.length() == 3) {
+            String query = "select * from city where countrycode=?";
+            List<City> findCities_ = new ArrayList<>();
+            try (
+                    PreparedStatement preparedStatement = MySqlConnection.getConnection().prepareStatement(query)
+            ) {
+                preparedStatement.setString(1, code);
+                ResultSet resultSet = preparedStatement.executeQuery();
+
+                while (resultSet.next()) {
+                    findCities_.add(new City(
+                            resultSet.getInt(1),
+                            resultSet.getString(2),
+                            resultSet.getString(3),
+                            resultSet.getString(4),
+                            resultSet.getInt(5)
+                    ));
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return findCities_;
+        } else {
+            System.out.println("The countrycode needs to have 3 letters");
+        }
         return null;
     }
 
@@ -93,17 +118,17 @@ public class CityDaoIml implements CityDao {
 
     @Override
     public City add(City city) {
-        String query = "insert into city values (?,?,?,?,?)";
-        City addCity = new City();
-        try (
-                PreparedStatement preparedStatement = MySqlConnection.getConnection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-                ) {
+        String query = "insert into city (name, countrycode, district, population) values (?,?,?,?)";
 
-            preparedStatement.setInt(1, Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setString(2, city.getName());
-            preparedStatement.setString(3, city.getCountryCode());
-            preparedStatement.setString(4, city.getDistrict());
-            preparedStatement.setInt(5, city.getPopulation());
+        try (
+                PreparedStatement preparedStatement =
+                        MySqlConnection.getConnection().prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+                )
+        {
+            preparedStatement.setString(1, city.getName());
+            preparedStatement.setString(2, city.getCountryCode());
+            preparedStatement.setString(3, city.getDistrict());
+            preparedStatement.setInt(4, city.getPopulation());
 
             int result = preparedStatement.executeUpdate();
             System.out.println((result==1) ? "New City added successfully to database" : "Not ok");
@@ -111,7 +136,7 @@ public class CityDaoIml implements CityDao {
             } catch (SQLException e) {
             e.printStackTrace();
         }
-        return addCity;
+        return null;
     }
 
     @Override
