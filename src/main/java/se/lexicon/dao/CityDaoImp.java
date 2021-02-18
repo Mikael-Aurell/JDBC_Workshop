@@ -115,7 +115,6 @@ public class CityDaoImp implements CityDao {
         return findCities;
     }
 
-
     @Override
     public City add(City city) {
         String query = "insert into city (name, countrycode, district, population) values (?,?,?,?)";
@@ -133,15 +132,42 @@ public class CityDaoImp implements CityDao {
             int result = preparedStatement.executeUpdate();
             System.out.println((result==1) ? "New City added successfully to database" : "Not ok");
 
+            //get generated key from prepared statement
+            ResultSet resultSet = preparedStatement.getGeneratedKeys();
+            int idKey = 0;
+            while(resultSet.next()){
+                idKey = resultSet.getInt(1);
+            }
+
             } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return city;
     }
 
     @Override
     public City update(City city) {
-        return null;
+        findByName(city.getName());
+        String query = "update city set name=?, countrycode=?, district=?, population=? where id=?";
+
+        try (
+                PreparedStatement preparedStatement =
+                        MySqlConnection.getConnection().prepareStatement(query);
+        )
+        {
+            preparedStatement.setString(1, city.getName());
+            preparedStatement.setString(2, city.getCountryCode());
+            preparedStatement.setString(3, city.getDistrict());
+            preparedStatement.setInt(4, city.getPopulation());
+            preparedStatement.setInt(5, city.getId());
+
+            int result = preparedStatement.executeUpdate();
+            System.out.println((result==1) ? "New City updated successfully to database" : "Not ok");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return city;
     }
 
     @Override

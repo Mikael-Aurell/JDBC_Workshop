@@ -21,14 +21,24 @@ public class App
         //System.out.println(city.toString());
 
         //FindByName
-        List<City> findCities = dao.findByName("Stockholm");
-        findCities.forEach(System.out::println);
+        //List<City> findCities = dao.findByName("Stockholm2");
+
+
+
 
         //FindByCode
         //List<City> findCities = dao.findByCode("ARG");
         //findCities.forEach(System.out::println);
 
-       //City aCity = new City("Stockholm","SWE","Dis",67);
-       //City addCity_ = dao.add(aCity);
+        //Add
+        //City addCity = new City("Stockholm2","SWE","Dis",68);
+        //City addCity_ = dao.add(aCity);
+        //System.out.println(addCity_);
+
+        City aCity = new City(4085,"Stockholm2","SWE","Dis",680);
+        City updateCity_ = dao.update(aCity);
+        System.out.println(updateCity_);
+        List<City> findCities = dao.findByName("Stockholm2");
+        findCities.forEach(System.out::println);
     }
 }
